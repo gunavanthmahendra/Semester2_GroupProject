@@ -1,0 +1,5 @@
+To push changes
+
+git commit -m "message"
+
+git push
