@@ -1,0 +1,10 @@
+To change Directories:
+
+cd Desktop\Semester2_GroupProject
+or cd OneDrive\Desktop\Semester2_GroupProject
+
+To push changes:
+
+git commit -m "message"
+
+git push
