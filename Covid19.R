@@ -1,3 +1,4 @@
+setwd("C:\\Users\\guna3\\Desktop\\Semester2_GroupProject")
 data = read.csv("C:\\Users\\guna3\\Desktop\\Semester2_GroupProject\\data_files\\covid_19.csv")
 data$Date = as.Date(data$Date, "%d-%m-%Y")
 ## Aggregating the data based on Country and Date.
@@ -50,7 +51,7 @@ while (i <= nrow(data.frame(regional_data))) {
 base_line_plot = ggplot(regional_data, mapping = aes(x = Date, y = Confirmed))
 
 # Overall Graph
-base_line_plot + geom_smooth(color = "#C70039", se = FALSE) + 
+base_line_plot + geom_smooth(color = "#C70039") + 
   facet_wrap(~ WHO.Region, nrow = 2, scales = c("free")) + 
   theme_minimal(base_size = 12) + 
   theme(axis.text.x = element_text(angle = 90)) + 
@@ -64,3 +65,50 @@ base_line_plot + geom_smooth(mapping = aes(color = Season), se = FALSE) +
   theme(axis.text.x = element_text(angle = 90)) + 
   scale_x_date(date_breaks = "1 month", date_labels = "%b") + 
   labs(x = "", y = "Confirmed Cases")
+
+# Defining Regional datasets:
+
+africa = filter(regional_data, WHO.Region == 'Africa')
+americas = filter(regional_data, WHO.Region == 'Americas')
+eastern_mediterranean = filter(regional_data, WHO.Region == 'Eastern Mediterranean')
+europe = filter(regional_data, WHO.Region == 'Europe')
+south_east_asia = filter(regional_data, WHO.Region == 'South-East Asia')
+western_pacific = filter(regional_data, WHO.Region == 'Western Pacific')
+
+# Correlation Tests
+deathtorecovery = list()
+activetodeath = list()
+counter = 0
+for (df in list(africa, americas, eastern_mediterranean, europe, south_east_asia, western_pacific)) {
+  counter = counter + 1
+  eval(parse(text = paste(str_replace_all(as.character(df[1,1]), "[' '-]", ""), "_deaths = unlist(df$Deaths)", sep = "")))
+  eval(parse(text = paste(str_replace_all(as.character(df[1,1]), "[' '-]", ""), "_recovered = unlist(df$Recovered)", sep = "")))
+  eval(parse(text = paste(str_replace_all(as.character(df[1,1]), "[' '-]", ""), "_active = unlist(df$Active)", sep = "")))
+  eval(parse(text = 
+         paste("deathtorecovery[[counter]] = cor.test(", 
+               paste(str_replace_all(as.character(df[1,1]), "[' '-]", ""), "_deaths", sep = ""),
+               ", ",
+               paste(str_replace_all(as.character(df[1,1]), "[' '-]", ""), "_recovered", sep = ""),
+               ", method = 'pearson'",
+               ")",
+               sep = ""
+         )
+  ))
+  eval(parse(text = 
+         paste("activetodeath[[counter]] = cor.test(", 
+               paste(str_replace_all(as.character(df[1,1]), "[' '-]", ""), "_active", sep = ""),
+               ", ",
+               paste(str_replace_all(as.character(df[1,1]), "[' '-]", ""), "_deaths", sep = ""),
+               ", method = 'pearson'",
+               ")",
+               sep = ""
+         )
+  ))
+}
+
+# Region specific hypothesis test for south east asia
+south_east_asia["cumulative recovered"] = south_east_asia$Confirmed - south_east_asia$ - south_east_asia$Deaths
+
+
+south_east_asia %>% filter(Date %in% winter) %>% summarise(Confirmed = sum(Confirmed))
+ggplot(regional_data, mapping = aes(x = Date, y = Confirmed)) + geom_smooth(mapping = aes(color = WHO.Region), se = FALSE)
