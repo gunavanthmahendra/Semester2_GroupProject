@@ -1,0 +1,11 @@
+Africa: 60543.42
+
+Americas: 57008.89
+
+Eastern Mediterranean: 27277.50
+
+Europe: 99936.74
+
+South-East Asia: 12480.93
+
+Western Pacific: 69007.28

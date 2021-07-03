@@ -66,7 +66,7 @@ base_line_plot + geom_smooth(mapping = aes(color = Season), se = FALSE) +
   scale_x_date(date_breaks = "1 month", date_labels = "%b") + 
   labs(x = "", y = "Confirmed Cases")
 
-# Defining Regional datasets:
+## Defining Regional datasets:
 
 africa = filter(regional_data, WHO.Region == 'Africa')
 americas = filter(regional_data, WHO.Region == 'Americas')
@@ -75,7 +75,7 @@ europe = filter(regional_data, WHO.Region == 'Europe')
 south_east_asia = filter(regional_data, WHO.Region == 'South-East Asia')
 western_pacific = filter(regional_data, WHO.Region == 'Western Pacific')
 
-# Correlation Tests
+## Correlation Tests: Ran loop and appended the results to lists.
 deathtorecovery = list()
 activetodeath = list()
 counter = 0
@@ -106,5 +106,116 @@ for (df in list(africa, americas, eastern_mediterranean, europe, south_east_asia
   ))
 }
 
-# Region specific hypothesis test for south east asia
+## Region specific hypothesis test for South East Asia on 01-06-2020 vs Previous Period
 
+region_hypo = cleaned_data %>% filter(WHO.Region == "South-East Asia")
+region_hypo["Recovery Rate"] = region_hypo$Recovered/(region_hypo$Recovered + region_hypo$Deaths)
+
+# Filtering Date on 01-06-2020
+data_june_one = region_hypo %>% filter(Date == as.Date("2020-06-01"))
+
+# Filtering data from 22-01-2020 to 31-05-2020 and finding mean recovery rate
+prev_period_data = region_hypo %>% filter(Date >= as.Date("2020-01-22") & Date <= as.Date("2020-05-31"))
+mean_prev_period = mean(prev_period_data$`Recovery Rate`)
+
+# Performing t-test
+t.test(data_june_one$`Recovery Rate`, mu = mean_prev_period)
+
+## Hypothesis test for mean deaths: March 2020 vs June 2020 for South East Asia
+
+# Filtering for March and June and taking mean deaths for June
+march2020 = region_hypo %>% filter(Date >= as.Date("2020-03-01") & Date <= as.Date("2020-03-31"))
+june2020 = region_hypo %>% filter(Date >= as.Date("2020-06-01") & Date <= as.Date("2020-06-30"))
+mean_june2020 = mean(june2020$Deaths)
+t.test(march2020$Deaths, mu = mean_june2020, alternative = "greater")
+
+## Linear Model
+
+# Checking for Normality of Variance using QQ Plots
+
+# Region Wise QQ Plot from Regional Dataset
+ggplot(regional_data, aes(sample = regional_data$Deaths)) + 
+  stat_qq(colour = colfunc(1128)) + 
+  geom_qq_line(colour = colfunc1(12)) + 
+  facet_wrap(~ WHO.Region, nrow = 2, scales = c("free")) +
+  theme_bw() +
+  theme(strip.background = element_rect(colour="black", fill="white")) + 
+  labs(y = "Deaths")
+
+# Country Wise QQ Plot from Original dataset
+ggplot(cleaned_data, aes(sample = cleaned_data$Deaths)) + 
+  stat_qq() + 
+  geom_qq_line() + 
+  facet_wrap(~ Country.Region, scales = c("free")) +
+  labs(y = "Deaths")
+
+# Region Wise QQ Plot from Original dataset
+ggplot(cleaned_data, aes(sample = cleaned_data$Deaths)) + 
+  stat_qq(colour = colfunc(35156)) + 
+  geom_qq_line(colour = colfunc1(12)) + 
+  facet_wrap(~ WHO.Region, nrow = 2, scales = c("free")) +
+  theme_bw() +
+  theme(strip.background = element_rect(colour="black", fill="white")) + 
+  labs(y = "Deaths")
+
+# Preparing Model using Regional Dataset
+deaths_model = lm(Deaths ~ WHO.Region + Date, data = regional_data)
+new_data = data.frame(WHO.Region = unique(regional_data$WHO.Region))
+
+# Prediction
+new_data["Date"] = as.Date("2020-08-01")
+predict.lm(deaths_model, newdata = new_data)
+
+# Residual Analysis
+ggplot(regional_data, mapping = aes(x = regional_data$Date, y = deaths_model$residuals)) + 
+  geom_point(colour = colfunc(1128)) + 
+  facet_wrap(~ WHO.Region, nrow = 2, scales = c("free")) + 
+  theme_bw() +
+  theme(strip.background = element_rect(colour="black", fill="white")) +
+  scale_x_date(date_breaks = "1 month", date_labels = "%b") + 
+  labs(x = "Date", y = "Deaths")
+
+## Pie Charts
+pie_data = regional_data %>% group_by(across(c("WHO.Region"))) %>% 
+  summarise(
+    Deaths = sum(Deaths),
+    Confirmed = sum(Confirmed),
+    Recovered = sum(Recovered),
+    Active = sum(Active)
+  )
+
+# Deaths
+ggplot(pie_data, aes(x="", y=Deaths, fill=WHO.Region)) +
+  geom_bar(width = 1, stat = "identity") + 
+  coord_polar("y", start=0) + 
+  ggtitle("Deaths") +
+  labs(x = "", y = "") +
+  theme_void() + 
+  theme(plot.title = element_text(hjust = 0.5))
+
+# Confirmed
+ggplot(pie_data, aes(x="", y=Confirmed, fill=WHO.Region)) +
+  geom_bar(width = 1, stat = "identity") + 
+  coord_polar("y", start=0) + 
+  ggtitle("Confirmed") +
+  labs(x = "", y = "") +
+  theme_void() + 
+  theme(plot.title = element_text(hjust = 0.5))
+
+# Active
+ggplot(pie_data, aes(x="", y=Active, fill=WHO.Region)) +
+  geom_bar(width = 1, stat = "identity") + 
+  coord_polar("y", start=0) + 
+  ggtitle("Active") +
+  labs(x = "", y = "") +
+  theme_void() + 
+  theme(plot.title = element_text(hjust = 0.5))
+
+# Recovered
+ggplot(pie_data, aes(x="", y=Recovered, fill=WHO.Region)) +
+  geom_bar(width = 1, stat = "identity") + 
+  coord_polar("y", start=0) + 
+  ggtitle("Recovered") +
+  labs(x = "", y = "") +
+  theme_void() + 
+  theme(plot.title = element_text(hjust = 0.5))

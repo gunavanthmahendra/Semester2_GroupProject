@@ -1,0 +1,8 @@
+data:  march2020$Deaths
+t = -0.76232, df = 309, p-value = 0.7768
+alternative hypothesis: true mean is greater than 1255.023
+95 percent confidence interval:
+ 1157.727      Inf
+sample estimates:
+mean of x 
+ 1224.274 
