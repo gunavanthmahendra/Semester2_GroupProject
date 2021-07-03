@@ -107,8 +107,4 @@ for (df in list(africa, americas, eastern_mediterranean, europe, south_east_asia
 }
 
 # Region specific hypothesis test for south east asia
-south_east_asia["cumulative recovered"] = south_east_asia$Confirmed - south_east_asia$ - south_east_asia$Deaths
 
-
-south_east_asia %>% filter(Date %in% winter) %>% summarise(Confirmed = sum(Confirmed))
-ggplot(regional_data, mapping = aes(x = Date, y = Confirmed)) + geom_smooth(mapping = aes(color = WHO.Region), se = FALSE)
