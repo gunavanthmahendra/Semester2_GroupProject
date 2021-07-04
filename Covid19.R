@@ -159,12 +159,47 @@ ggplot(cleaned_data, aes(sample = cleaned_data$Deaths)) +
   labs(y = "Deaths")
 
 # Preparing Model using Regional Dataset
-deaths_model = lm(Deaths ~ WHO.Region + Date, data = regional_data)
+deaths_model = lm(Deaths ~ WHO.Region + Date, data = regional_data) # Parameters here are Region and Date
 new_data = data.frame(WHO.Region = unique(regional_data$WHO.Region))
 
 # Prediction
-new_data["Date"] = as.Date("2020-08-01")
-predict.lm(deaths_model, newdata = new_data)
+list_africa = vector("numeric", 0) # Making lists to store daily predictions
+list_america = vector("numeric", 0)
+list_east_mediterranean = vector("numeric", 0)
+list_europe = vector("numeric", 0)
+list_southeast_asia = vector("numeric", 0)
+list_west_pacific = vector("numeric", 0)
+
+dates = c(
+  "2020-08-01", "2020-08-02", "2020-08-03", "2020-08-04", "2020-08-05", "2020-08-06", "2020-08-07", "2020-08-08", 
+  "2020-08-09", "2020-08-10", "2020-08-11", "2020-08-12", "2020-08-13", "2020-08-14", "2020-08-15", "2020-08-16", 
+  "2020-08-17", "2020-08-18", "2020-08-19", "2020-08-20", "2020-08-21", "2020-08-22", "2020-08-23", "2020-08-24", 
+  "2020-08-25", "2020-08-26", "2020-08-27", "2020-08-28", "2020-08-29", "2020-08-30"
+  )
+
+# Looping through predictions on each day and appending to the list
+for (d in dates) {
+  new_data["Date"] = as.Date(d)
+  prediction = predict.lm(deaths_model, newdata = new_data)
+  list_africa = c(list_africa, as.numeric(prediction[1]))
+  list_america = c(list_america, as.numeric(prediction[2]))
+  list_east_mediterranean = c(list_east_mediterranean, as.numeric(prediction[3]))
+  list_europe = c(list_europe, as.numeric(prediction[4]))
+  list_southeast_asia = c(list_southeast_asia, as.numeric(prediction[5]))
+  list_west_pacific = c(list_west_pacific, as.numeric(prediction[6]))
+  }
+
+# Taking sum of daily predictions for each region to get total predicted deaths for October.
+aug_prediction = c(
+  sum(list_africa),
+  sum(list_america), 
+  sum(list_east_mediterranean), 
+  sum(list_europe), 
+  sum(list_southeast_asia), 
+  sum(list_west_pacific)
+)
+
+aug_prediction
 
 # Residual Analysis
 ggplot(regional_data, mapping = aes(x = regional_data$Date, y = deaths_model$residuals)) + 
@@ -172,7 +207,7 @@ ggplot(regional_data, mapping = aes(x = regional_data$Date, y = deaths_model$res
   facet_wrap(~ WHO.Region, nrow = 2, scales = c("free")) + 
   theme_bw() +
   theme(strip.background = element_rect(colour="black", fill="white")) +
-  scale_x_date(date_breaks = "1 month", date_labels = "%b") + 
+  scale_x_date(date_breaks = "1 month", date_labels = "%b") +
   labs(x = "Date", y = "Deaths")
 
 ## Pie Charts
@@ -219,3 +254,82 @@ ggplot(pie_data, aes(x="", y=Recovered, fill=WHO.Region)) +
   labs(x = "", y = "") +
   theme_void() + 
   theme(plot.title = element_text(hjust = 0.5))
+
+# Analysing Variance for the month of May and August.
+
+# Making predictions for confirmed cases for August 2020.
+cases_model = lm(Confirmed ~ WHO.Region + Date, data = regional_data)
+new_data_c = data.frame(WHO.Region = unique(regional_data$WHO.Region))
+list_africa_cases = vector("numeric", 0) # Making lists to store daily predictions
+list_america_cases = vector("numeric", 0)
+list_east_mediterranean_cases = vector("numeric", 0)
+list_europe_cases = vector("numeric", 0)
+list_southeast_asia_cases = vector("numeric", 0)
+list_west_pacific_cases = vector("numeric", 0)
+
+dates_c = c(
+  "2020-08-01", "2020-08-02", "2020-08-03", "2020-08-04", "2020-08-05", "2020-08-06", "2020-08-07", "2020-08-08", 
+  "2020-08-09", "2020-08-10", "2020-08-11", "2020-08-12", "2020-08-13", "2020-08-14", "2020-08-15", "2020-08-16", 
+  "2020-08-17", "2020-08-18", "2020-08-19", "2020-08-20", "2020-08-21", "2020-08-22", "2020-08-23", "2020-08-24", 
+  "2020-08-25", "2020-08-26", "2020-08-27", "2020-08-28", "2020-08-29", "2020-08-30"
+)
+
+# Looping through predictions on each day and appending to the list
+for (d in dates_c) {
+  new_data_c["Date"] = as.Date(d)
+  prediction = predict.lm(cases_model, newdata = new_data)
+  list_africa_cases = c(list_africa_cases, as.numeric(prediction[1]))
+  list_america_cases = c(list_america_cases, as.numeric(prediction[2]))
+  list_east_mediterranean_cases = c(list_east_mediterranean_cases, as.numeric(prediction[3]))
+  list_europe_cases = c(list_europe_cases, as.numeric(prediction[4]))
+  list_southeast_asia_cases = c(list_southeast_asia_cases, as.numeric(prediction[5]))
+  list_west_pacific_cases = c(list_west_pacific_cases, as.numeric(prediction[6]))
+}
+
+# Taking sum of daily predictions for each region to get total predicted deaths for August.
+aug_prediction_c = c(
+  sum(list_africa_cases),
+  sum(list_america_cases), 
+  sum(list_east_mediterranean_cases), 
+  sum(list_europe_cases), 
+  sum(list_southeast_asia_cases), 
+  sum(list_west_pacific_cases)
+)
+aug_prediction_c
+
+# Making the dataframe for confirmed cases in August and May
+regions = c("Africa", "Americas", "Eastern Mediterranean", "Europe", "South-East Asia", "Western Pacific")
+august_cases = data.frame(WHO.Region = rep(regions, times = rep(30, 6)), 
+                          Date = rep(dates_c, 6), 
+                          Confirmed = c(
+                          list_africa_cases, 
+                          list_america_cases,
+                          list_east_mediterranean_cases,
+                          list_europe_cases,
+                          list_southeast_asia_cases,
+                          list_west_pacific_cases
+                          ))
+may_cases = regional_data %>% filter(Date >= as.Date("2020-05-01"), Date <= as.Date("2020-05-30"))
+
+# Performing Analysis of Variance
+may_aug_model = lm(august_cases$Confirmed ~ may_model_data$Confirmed, data = filter)
+summary(may_aug_model)
+anova(may_aug_model)
+
+
+# Correlation between Confirmed and Active
+regional_correlations = vector("numeric", 0)
+for (region in regions) {
+  cor_data = regional_data %>% filter(WHO.Region == region)
+  regional_correlations = c(regional_correlations, cor(cor_data$Confirmed, cor_data$Active))
+}
+ggplot(cleaned_data, mapping = aes(x = Confirmed, y = Active)) +
+  geom_point(color = "#FA8072", ) + 
+  geom_line(color = "blue", linetype = 1) + 
+  facet_wrap(~ WHO.Region, nrow = 2, scales = c("free")) +
+  theme_bw() +
+  labs(x = "Confirmed Cases", y = "Active Cases") + 
+  ggtitle("Active Cases vs Confirmed Cases") + 
+  theme(plot.title = element_text(hjust = 0.5), strip.background = element_rect(colour="black", fill="white")) + 
+  scale_x_continuous(labels = comma) + 
+  scale_y_continuous(labels = comma)

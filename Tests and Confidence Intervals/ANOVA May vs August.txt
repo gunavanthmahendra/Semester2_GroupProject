@@ -1,0 +1,8 @@
+Analysis of Variance Table
+
+Response: august_cases$Confirmed
+
+                     Df     Sum Sq    Mean Sq    F value    Pr(>F)    
+may_cases$Confirmed   1   4.5612e+15 4.5612e+15  5588.3 < 2.2e-16 ***
+Residuals           178   1.4528e+14 8.1620e+11                      
+---
