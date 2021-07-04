@@ -1,7 +1,7 @@
 library(tidyverse)
 setwd("C:\\Users\\guna3\\Desktop\\Semester2_GroupProject")
 statewise_testing = read.csv("C:\\Users\\guna3\\Desktop\\Semester2_GroupProject\\data_files\\StatewiseTestingDetails.csv")
-data = statewise_testing
+
 
 # Data Cleaning
 statewise_testing$Date = as.Date(statewise_testing$Date)
@@ -48,9 +48,9 @@ sum_cases_state = data.frame(State = states_data$State, Cases = states_data$Posi
 # Average Daily Positive Tests
 data_avg = statewise_testing %>% group_by(across(c("Date"))) %>% 
   summarise(
-    TotalSamples = sum(TotalSamples), 
-    Negative = sum(Negative),
-    Positive = sum(Positive)
+    TotalSamples = sum(TotalSamples, na.rm = T), 
+    Negative = sum(Negative, na.rm = T),
+    Positive = sum(Positive, na.rm = T)
   )
 avg_pos = sum(data_avg$Positive)/length(data_avg$Positive)
 avg_pos

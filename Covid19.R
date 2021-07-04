@@ -1,3 +1,4 @@
+library(tidyverse)
 setwd("C:\\Users\\guna3\\Desktop\\Semester2_GroupProject")
 data = read.csv("C:\\Users\\guna3\\Desktop\\Semester2_GroupProject\\data_files\\covid_19.csv")
 data$Date = as.Date(data$Date, "%d-%m-%Y")
