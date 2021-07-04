@@ -1,0 +1,57 @@
+[[1]]
+
+	Pearson's product-moment correlation
+
+data:  unlist(statewise_testing["Date"]) and statewise_testing$Positive
+t = 26.874, df = 4864, p-value < 2.2e-16
+alternative hypothesis: true correlation is not equal to 0
+95 percent confidence interval:
+ 0.3348449 0.3837814
+sample estimates:
+      cor 
+0.3595604 
+
+
+[[2]]
+NULL Because it is a character
+
+[[3]]
+
+	Pearson's product-moment correlation
+
+data:  unlist(statewise_testing["TotalSamples"]) and statewise_testing$Positive
+t = 115.51, df = 4864, p-value < 2.2e-16
+alternative hypothesis: true correlation is not equal to 0
+95 percent confidence interval:
+ 0.8483654 0.8633880
+sample estimates:
+      cor 
+0.8560574 
+
+
+[[4]]
+
+	Pearson's product-moment correlation
+
+data:  unlist(statewise_testing["Negative"]) and statewise_testing$Positive
+t = 81.149, df = 3048, p-value < 2.2e-16
+alternative hypothesis: true correlation is not equal to 0
+95 percent confidence interval:
+ 0.8152273 0.8377065
+sample estimates:
+      cor 
+0.8267967 
+
+
+[[5]]
+
+	Pearson's product-moment correlation
+
+data:  unlist(statewise_testing["Positive"]) and statewise_testing$Positive
+t = Inf, df = 4864, p-value < 2.2e-16
+alternative hypothesis: true correlation is not equal to 0
+95 percent confidence interval:
+ 1 1
+sample estimates:
+cor 
+  1 
