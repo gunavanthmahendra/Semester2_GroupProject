@@ -329,7 +329,7 @@ for (region in regions) {
 regional_correlations
 
 ggplot(cleaned_data, mapping = aes(x = Confirmed, y = Active)) +
-  geom_point(color = "#FA8072", ) + 
+  geom_point(color = "#FA8072") + 
   geom_line(color = "blue", linetype = 1) + 
   facet_wrap(~ WHO.Region, nrow = 2, scales = c("free")) +
   theme_bw() +
