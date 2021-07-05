@@ -3,30 +3,30 @@
 	Pearson's product-moment correlation
 
 data:  unlist(statewise_testing["Date"]) and statewise_testing$Positive
-t = 26.874, df = 4864, p-value < 2.2e-16
+t = 30.71, df = 6107, p-value < 2.2e-16
 alternative hypothesis: true correlation is not equal to 0
 95 percent confidence interval:
- 0.3348449 0.3837814
+ 0.3438215 0.3872704
 sample estimates:
       cor 
-0.3595604 
+0.3657452 
 
 
 [[2]]
-NULL Because it is a character
+NULL
 
 [[3]]
 
 	Pearson's product-moment correlation
 
 data:  unlist(statewise_testing["TotalSamples"]) and statewise_testing$Positive
-t = 115.51, df = 4864, p-value < 2.2e-16
+t = 136.46, df = 6107, p-value < 2.2e-16
 alternative hypothesis: true correlation is not equal to 0
 95 percent confidence interval:
- 0.8483654 0.8633880
+ 0.8614489 0.8738408
 sample estimates:
       cor 
-0.8560574 
+0.8677797 
 
 
 [[4]]
@@ -34,13 +34,13 @@ sample estimates:
 	Pearson's product-moment correlation
 
 data:  unlist(statewise_testing["Negative"]) and statewise_testing$Positive
-t = 81.149, df = 3048, p-value < 2.2e-16
+t = 117.65, df = 6107, p-value < 2.2e-16
 alternative hypothesis: true correlation is not equal to 0
 95 percent confidence interval:
- 0.8152273 0.8377065
+ 0.8251333 0.8404949
 sample estimates:
       cor 
-0.8267967 
+0.8329745 
 
 
 [[5]]
@@ -48,10 +48,24 @@ sample estimates:
 	Pearson's product-moment correlation
 
 data:  unlist(statewise_testing["Positive"]) and statewise_testing$Positive
-t = Inf, df = 4864, p-value < 2.2e-16
+t = 5244376314, df = 6107, p-value < 2.2e-16
 alternative hypothesis: true correlation is not equal to 0
 95 percent confidence interval:
  1 1
 sample estimates:
 cor 
   1 
+
+
+[[6]]
+
+	Pearson's product-moment correlation
+
+data:  unlist(statewise_testing["State_factor"]) and statewise_testing$Positive
+t = -3.104, df = 6107, p-value = 0.001918
+alternative hypothesis: true correlation is not equal to 0
+95 percent confidence interval:
+ -0.06470137 -0.01462597
+sample estimates:
+        cor 
+-0.03968859 

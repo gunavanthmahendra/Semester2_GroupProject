@@ -8,6 +8,9 @@ statewise_testing$Date = as.Date(statewise_testing$Date)
 statewise_testing$TotalSamples = as.numeric(statewise_testing$TotalSamples)
 statewise_testing$Negative = as.numeric(statewise_testing$Negative)
 statewise_testing$Positive = as.numeric(statewise_testing$Positive)
+statewise_testing$State = as.factor(statewise_testing$State)
+statewise_testing["State_factor"] = as.numeric(statewise_testing$State)
+
 
 for (i in 1:length(statewise_testing$State)) {
   if (is.na(statewise_testing$Positive[i])) {

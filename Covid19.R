@@ -1,4 +1,6 @@
 library(tidyverse)
+library(scales)
+colfunc = colorRampPalette(c("blue", "green"))
 setwd("C:\\Users\\guna3\\Desktop\\Semester2_GroupProject")
 data = read.csv("C:\\Users\\guna3\\Desktop\\Semester2_GroupProject\\data_files\\covid_19.csv")
 data$Date = as.Date(data$Date, "%d-%m-%Y")
@@ -52,7 +54,7 @@ while (i <= nrow(data.frame(regional_data))) {
 base_line_plot = ggplot(regional_data, mapping = aes(x = Date, y = Confirmed))
 
 # Overall Graph
-base_line_plot + geom_smooth(color = "#C70039") + 
+base_line_plot + geom_smooth(color = "#C70039", se = FALSE) + 
   facet_wrap(~ WHO.Region, nrow = 2, scales = c("free")) + 
   theme_minimal(base_size = 12) + 
   theme(axis.text.x = element_text(angle = 90)) + 
@@ -324,6 +326,8 @@ for (region in regions) {
   cor_data = regional_data %>% filter(WHO.Region == region)
   regional_correlations = c(regional_correlations, cor(cor_data$Confirmed, cor_data$Active))
 }
+regional_correlations
+
 ggplot(cleaned_data, mapping = aes(x = Confirmed, y = Active)) +
   geom_point(color = "#FA8072", ) + 
   geom_line(color = "blue", linetype = 1) + 
