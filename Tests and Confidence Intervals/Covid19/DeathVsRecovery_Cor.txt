@@ -1,0 +1,82 @@
+[[1]]
+
+	Pearson's product-moment correlation
+
+data:  Africa_deaths and Africa_recovered
+t = 0.48161, df = 186, p-value = 0.6306
+alternative hypothesis: true correlation is not equal to 0
+95 percent confidence interval:
+ -0.1083658  0.1775054
+sample estimates:
+       cor 
+0.03529171 
+
+
+[[2]]
+
+	Pearson's product-moment correlation
+
+data:  Americas_deaths and Americas_recovered
+t = -0.14363, df = 186, p-value = 0.8859
+alternative hypothesis: true correlation is not equal to 0
+95 percent confidence interval:
+ -0.1534100  0.1327794
+sample estimates:
+        cor 
+-0.01053093 
+
+
+[[3]]
+
+	Pearson's product-moment correlation
+
+data:  EasternMediterranean_deaths and EasternMediterranean_recovered
+t = -0.23853, df = 186, p-value = 0.8117
+alternative hypothesis: true correlation is not equal to 0
+95 percent confidence interval:
+ -0.1601962  0.1259386
+sample estimates:
+        cor 
+-0.01748684 
+
+
+[[4]]
+
+	Pearson's product-moment correlation
+
+data:  Europe_deaths and Europe_recovered
+t = 0.52648, df = 186, p-value = 0.5992
+alternative hypothesis: true correlation is not equal to 0
+95 percent confidence interval:
+ -0.1051160  0.1806873
+sample estimates:
+       cor 
+0.03857448 
+
+
+[[5]]
+
+	Pearson's product-moment correlation
+
+data:  SouthEastAsia_deaths and SouthEastAsia_recovered
+t = 0.54663, df = 186, p-value = 0.5853
+alternative hypothesis: true correlation is not equal to 0
+95 percent confidence interval:
+ -0.1036560  0.1821148
+sample estimates:
+       cor 
+0.04004836 
+
+
+[[6]]
+
+	Pearson's product-moment correlation
+
+data:  WesternPacific_deaths and WesternPacific_recovered
+t = 0.15041, df = 186, p-value = 0.8806
+alternative hypothesis: true correlation is not equal to 0
+95 percent confidence interval:
+ -0.1322912  0.1538952
+sample estimates:
+      cor 
+0.0110278 

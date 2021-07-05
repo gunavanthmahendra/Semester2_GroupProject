@@ -1,0 +1,8 @@
+data:  data_june_one$`Recovery Rate`
+t = 0.10744, df = 9, p-value = 0.9168
+alternative hypothesis: true mean is not equal to 0.3823964
+95 percent confidence interval:
+ 0.2345122 0.5450281
+sample estimates:
+mean of x 
+0.3897701 
