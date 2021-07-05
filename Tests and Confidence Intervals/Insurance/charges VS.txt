@@ -1,0 +1,76 @@
+[[1]]
+                 Charges Vs Age
+
+	Pearson's product-moment correlation
+
+data:  data$charges and data$age
+t = 11.453, df = 1336, p-value < 2.2e-16
+alternative hypothesis: true correlation is not equal to 0
+95 percent confidence interval:
+ 0.2494139 0.3470381
+sample estimates:
+      cor 
+0.2990082 
+
+
+[[2]]
+               Charges Vs BMI
+
+ 	Pearson's product-moment correlation
+
+data:  data$charges and data$bmi
+t = 7.3966, df = 1336, p-value = 2.459e-13
+alternative hypothesis: true correlation is not equal to 0
+95 percent confidence interval:
+ 0.1463052 0.2492822
+sample estimates:
+     cor 
+0.198341 
+
+
+[[3]]
+               Charges Vs Children
+
+	Pearson's product-moment correlation
+
+data:  data$charges and data$children
+t = 2.4912, df = 1336, p-value = 0.01285
+alternative hypothesis: true correlation is not equal to 0
+95 percent confidence interval:
+ 0.0144600 0.1211477
+sample estimates:
+       cor 
+0.06799823 
+
+
+[[4]]
+               Charges Vs Smoker
+
+	Pearson's product-moment correlation
+
+data:  data$charges and data$smoker
+t = 46.665, df = 1336, p-value < 2.2e-16
+alternative hypothesis: true correlation is not equal to 0
+95 percent confidence interval:
+ 0.7659767 0.8068037
+sample estimates:
+      cor 
+0.7872514 
+
+
+[[5]]
+               Charges Vs Region
+
+	Pearson's product-moment correlation
+
+data:  data$charges and data$region
+t = -0.22692, df = 1336, p-value = 0.8205
+alternative hypothesis: true correlation is not equal to 0
+95 percent confidence interval:
+ -0.05977926  0.04739845
+sample estimates:
+         cor 
+-0.006208235 
+
+
+
