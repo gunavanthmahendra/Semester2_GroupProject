@@ -180,7 +180,3 @@ glm(log_charges ~ age + sex + bmi + children + smoker + region +
       age * children +
       age * region, 
     data = data)
-
-
-
-
