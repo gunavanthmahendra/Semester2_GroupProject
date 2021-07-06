@@ -1,6 +1,7 @@
 library(tidyverse)
 library(scales)
 colfunc = colorRampPalette(c("blue", "green"))
+colfunc1 = colorRampPalette(c("red", "yellow"))
 setwd("C:\\Users\\guna3\\Desktop\\Semester2_GroupProject")
 data = read.csv("C:\\Users\\guna3\\Desktop\\Semester2_GroupProject\\data_files\\covid_19.csv")
 data$Date = as.Date(data$Date, "%d-%m-%Y")
@@ -26,7 +27,7 @@ winter = c(as.Date("2020-01-22"): as.Date("2020-02-29"))
 summer = c(as.Date("2020-03-01"): as.Date("2020-05-31"))
 monsoon = c(as.Date("2020-06-01"): as.Date("2020-07-27"))
 
-## Grouping by Season and WHO Regions
+## Grouping by WHO Regions and Date.
 regional_data = cleaned_data %>% 
   group_by(across(c("WHO.Region", "Date"))) %>%
   summarise(
@@ -108,11 +109,13 @@ for (df in list(africa, americas, eastern_mediterranean, europe, south_east_asia
          )
   ))
 }
+deathtorecovery
 
+activetodeath 
 ## Region specific hypothesis test for South East Asia on 01-06-2020 vs Previous Period
 
 region_hypo = cleaned_data %>% filter(WHO.Region == "South-East Asia")
-region_hypo["Recovery Rate"] = region_hypo$Recovered/(region_hypo$Recovered + region_hypo$Deaths)
+region_hypo["Recovery Rate"] = region_hypo$Recovered/(region_hypo$Recovered + region_hypo$Deaths) # Recovery Rate = Recovered/(Recovery + Deaths)
 
 # Filtering Date on 01-06-2020
 data_june_one = region_hypo %>% filter(Date == as.Date("2020-06-01"))
@@ -162,7 +165,10 @@ ggplot(cleaned_data, aes(sample = cleaned_data$Deaths)) +
   labs(y = "Deaths")
 
 # Preparing Model using Regional Dataset
-deaths_model = lm(Deaths ~ WHO.Region + Date, data = regional_data) # Parameters here are Region and Date
+deaths_model = lm(Deaths ~ WHO.Region + Date, data = regional_data)
+summary(deaths_model)
+
+# Parameters here are Region and Date
 new_data = data.frame(WHO.Region = unique(regional_data$WHO.Region))
 
 # Prediction
@@ -318,6 +324,7 @@ may_cases = regional_data %>% filter(Date >= as.Date("2020-05-01"), Date <= as.D
 may_aug_model = lm(august_cases$Confirmed ~ may_model_data$Confirmed, data = filter)
 summary(may_aug_model)
 anova(may_aug_model)
+
 
 
 # Correlation between Confirmed and Active
