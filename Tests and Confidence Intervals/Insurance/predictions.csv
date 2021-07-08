@@ -1,0 +1,5 @@
+region,smoker,sex,age,bmi,Estimated Charge
+southeast,yes,female,50,30,32148.75567
+northeast,yes,male,35,23,22571.84144
+northwest,no,male,40,27,6273.172224
+southwest,no,female,19,37,3932.39007

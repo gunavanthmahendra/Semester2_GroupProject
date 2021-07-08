@@ -22,6 +22,7 @@ data$region = as.factor(data$region)
 #data$region = as.numeric(data$region)
 
 data["log_charges"] = log(data$charges)
+
 head(data)
 
 ## 1 
@@ -134,17 +135,19 @@ cor_test_age
 
 
 ## 5 GLM model 
-model_data = data %>% group_by(across(c("region","smoker", "sex"))) %>%
+model_data = data %>% group_by(across(c("age", "region","smoker", "sex"))) %>%
   summarise(
-    log_charges = mean(log_charges), 
-    age = mean(age), 
+    log_charges = mean(log_charges),
     children = sum(children), 
-    bmi = mean(bmi)
+    bmi = mean(bmi),
+    charges = mean(charges)
     )
 
-predictor_model = glm(log_charges ~  smoker + sex + children +
+predictor_model = glm(log_charges ~  smoker + sex + age + bmi +
                                     sex:smoker + 
-                                    region:smoker, 
+                                    region:smoker + 
+                                    age:smoker +
+                                    age:bmi, 
                                 data = model_data)
 
 summary(predictor_model)
@@ -174,3 +177,32 @@ ggplot(mapping = aes(sample = residuals(predictor_model))) +
   theme(plot.title = element_text(hjust = 0.5))
 
 
+# Sample Predictions
+
+prediction_data = data.frame(region = unique(model_data$region), 
+                             smoker = c("yes", "yes", "no", "no"), 
+                             sex = c("male", "female", "male", "female"), 
+                             age = c(35, 50, 40, 19), 
+                             bmi = c(23, 30, 27, 37))
+
+prediction_data$sex = as.factor(prediction_data$sex)
+prediction_data$smoker = as.factor(prediction_data$smoker)
+prediction_data$region = as.factor(prediction_data$region)
+predicted_charges = exp(predict.glm(predictor_model, newdata = prediction_data))
+predictions = prediction_data
+predictions["Estimated Charge"] = predicted_charges
+
+regional_effect = data.frame(region = unique(model_data$region), 
+                             smoker = "yes", 
+                             sex = "male", 
+                             age = 35, 
+                             bmi = 25)
+
+regional_effect$smoker = as.factor(regional_effect$smoker)
+regional_effect$sex = as.factor(regional_effect$sex)
+regional_effect$region = as.factor(regional_effect$region)
+regional_predict = exp(predict.glm(predictor_model, newdata = regional_effect))
+regional_effect["Estimated Charge"] = regional_predict
+
+write.csv(regional_effect, "regional_prediction.csv")
+write.csv(predictions, "predictions.csv")

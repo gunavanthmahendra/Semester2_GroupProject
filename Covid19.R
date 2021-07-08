@@ -1,10 +1,27 @@
 library(tidyverse)
 library(scales)
+library(lubridate)
+
+## Defining required functions
+
 colfunc = colorRampPalette(c("blue", "green"))
+
 colfunc1 = colorRampPalette(c("red", "yellow"))
+
+date_generator = function(date, nday) {
+  date_list = c(as.Date(date))
+  for (i in 1:nday) {
+    date_list = c(date_list, as.Date(date) + days(1))
+    date = as.Date(date) + days(1)
+  }
+  return(as.character(date_list))
+}
+
+## Setting working directory and reading data
 setwd("C:\\Users\\guna3\\Desktop\\Semester2_GroupProject")
 data = read.csv("C:\\Users\\guna3\\Desktop\\Semester2_GroupProject\\data_files\\covid_19.csv")
 data$Date = as.Date(data$Date, "%d-%m-%Y")
+
 ## Aggregating the data based on Country and Date.
 cleaned_data = data %>% group_by(across(c("Country.Region", "Date"))) %>% 
   summarise(
@@ -179,15 +196,11 @@ list_europe = vector("numeric", 0)
 list_southeast_asia = vector("numeric", 0)
 list_west_pacific = vector("numeric", 0)
 
-dates = c(
-  "2020-08-01", "2020-08-02", "2020-08-03", "2020-08-04", "2020-08-05", "2020-08-06", "2020-08-07", "2020-08-08", 
-  "2020-08-09", "2020-08-10", "2020-08-11", "2020-08-12", "2020-08-13", "2020-08-14", "2020-08-15", "2020-08-16", 
-  "2020-08-17", "2020-08-18", "2020-08-19", "2020-08-20", "2020-08-21", "2020-08-22", "2020-08-23", "2020-08-24", 
-  "2020-08-25", "2020-08-26", "2020-08-27", "2020-08-28", "2020-08-29", "2020-08-30"
-  )
+dates = date_generator(as.Date("2020-08-01"), 29)
 
 # Looping through predictions on each day and appending to the list
 for (d in dates) {
+  print(d)
   new_data["Date"] = as.Date(d)
   prediction = predict.lm(deaths_model, newdata = new_data)
   list_africa = c(list_africa, as.numeric(prediction[1]))
@@ -276,12 +289,7 @@ list_europe_cases = vector("numeric", 0)
 list_southeast_asia_cases = vector("numeric", 0)
 list_west_pacific_cases = vector("numeric", 0)
 
-dates_c = c(
-  "2020-08-01", "2020-08-02", "2020-08-03", "2020-08-04", "2020-08-05", "2020-08-06", "2020-08-07", "2020-08-08", 
-  "2020-08-09", "2020-08-10", "2020-08-11", "2020-08-12", "2020-08-13", "2020-08-14", "2020-08-15", "2020-08-16", 
-  "2020-08-17", "2020-08-18", "2020-08-19", "2020-08-20", "2020-08-21", "2020-08-22", "2020-08-23", "2020-08-24", 
-  "2020-08-25", "2020-08-26", "2020-08-27", "2020-08-28", "2020-08-29", "2020-08-30"
-)
+dates_c = date_generator(as.Date("2020-08-01"), 29)
 
 # Looping through predictions on each day and appending to the list
 for (d in dates_c) {
