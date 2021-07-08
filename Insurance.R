@@ -1,4 +1,5 @@
 library(tidyverse)
+library(MASS)
 ## Reading the csv file
 insurance_data<- read.csv(file.choose())
 head(insurance_data)
@@ -203,6 +204,8 @@ regional_effect$sex = as.factor(regional_effect$sex)
 regional_effect$region = as.factor(regional_effect$region)
 regional_predict = exp(predict.glm(predictor_model, newdata = regional_effect))
 regional_effect["Estimated Charge"] = regional_predict
+
+# Exporting the Results
 
 write.csv(regional_effect, "regional_prediction.csv")
 write.csv(predictions, "predictions.csv")
