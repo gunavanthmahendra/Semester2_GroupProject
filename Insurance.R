@@ -9,17 +9,17 @@ data=insurance_data
 data$age= as.numeric(data$age)
 
 data$sex = as.factor(data$sex)
-data$sex = as.numeric(data$sex)
+#data$sex = as.numeric(data$sex)
 
 data$bmi = as.numeric(data$bmi)
 
 data$children = as.numeric(data$children)
 
 data$smoker= as.factor(data$smoker)
-data$smoker=as.numeric(data$smoker)
+#data$smoker=as.numeric(data$smoker)
 
-data$region=as.factor(data$region)
-data$region=as.numeric(data$region)
+data$region = as.factor(data$region)
+#data$region = as.numeric(data$region)
 
 data["log_charges"] = log(data$charges)
 head(data)
@@ -94,13 +94,13 @@ ggplot(data = data, mapping = aes(x = bmi)) +
 
 ## BMI is normally distributed where the concentration of the data is in
 ## the center and thinner at the tails.
-pricing_model<- lm(data$charge~data$age+ data$sex +data$bmi + data$children + 
-                    data$smoker + data$region)
+pricing_model<- lm(charges ~ age + sex + bmi + children + 
+                    smoker + region, data = data)
 
 summary(pricing_model)
 
-##xi= age,sex,bmi,children,smoker,region
-##Y= charge
+## xi= age,sex,bmi,children,smoker,region
+## Y= charge
 ## the linear equation is 
 ## the linear model is
 ## charge= -35151.14+(-353.64)(region)+23820(smoker)+479.37(children)+332.57(bmi)
@@ -108,13 +108,21 @@ summary(pricing_model)
 
 
 ##4. correlation tests
+cor_data = data
+for (col in colnames(cor_data)) {
+  if (is.factor(unlist(cor_data[col]))) {
+    print(paste(col, " is a factor"))
+    eval(parse(text = paste("cor_data$", col, " = ", "as.numeric(cor_data$", col, ")", sep = "")))
+    
+  }
+}
 
 ## Hypothesis for the correlation tests
 ## H0: there is not correlation ie correlation=0
 ## H1; there exists some correlation and i.e., correlation=!0
 
 ## a) charges ~ age
-cor_test_age<- cor.test(data$charges,data$age)
+cor_test_age <- cor.test(cor_data$charges, cor_data$age)
 cor_test_age
 
 ##As the P value is lesser than 0.05 we  have enough evidence to reject 
@@ -122,61 +130,47 @@ cor_test_age
 ## it is not equal to zero.
 ## Though as the value of correlation is only 0.3 there is only a weak correlation
 
-## b) Charges~ BMI
-cor_test_BMI<- cor.test(data$charges, data$bmi)
-cor_test_BMI
-##As the P value is lesser than 0.05 we  have enough evidence to reject 
-## H0 and conclude that there is correlation between Charges and BMI and
-## it is not equal to zero.
-## Though as the value of correlation is only 0.2 there is only a weak correlation
 
-## c) Charges children
-cor_test_children<- cor.test(data$charges, data$children)
-cor_test_children
-
-##As the P value is lesser than 0.05 we  have enough evidence to reject 
-## H0 and conclude that there is correlation between Charges and Children and
-## it is not equal to zero.
-## Though, as the value of correlation is 0.06 there is a very weak correlation
-
-## d) Charges smoker
-cor_test_smoker<- cor.test(data$charges, data$smoker)
-cor_test_smoker
-
-##As the P value is lesser than 0.05 we  have enough evidence to reject 
-## H0 and conclude that there is correlation between Charges and smoker and
-## it is not equal to zero.
-## As the value of correlation is 0.8 there is a very strong correlation
-
-## e) Charges~ Region
-cor_test_region<- cor.test(data$charges, data$region)
-cor_test_region
-##As the P value is lesser than 0.08 we don't have enough evidence to reject 
-## H0 and conclude that there is no correlation between Charges and region and
-## it is equal to zero.
 
 
 ## 5 GLM model 
-pricing_model_after_changes = glm(log_charges ~ age + sex + bmi + children + smoker + region +
-                                 age * smoker +
-                                 age * sex +
-                                 bmi * smoker + 
-                                 age * children +
-                                 age * region, 
-                                data = data)
+model_data = data %>% group_by(across(c("region","smoker", "sex"))) %>%
+  summarise(
+    log_charges = mean(log_charges), 
+    age = mean(age), 
+    children = sum(children), 
+    bmi = mean(bmi)
+    )
 
-summary(pricing_model_after_changes)
+predictor_model = glm(log_charges ~  smoker + sex + children +
+                                    sex:smoker + 
+                                    region:smoker, 
+                                data = model_data)
 
-##xi= age,sex,bmi,smoker
-##Y= charge
-## the linear equation is 
-## the linear model is
-## charge= -35151.14+23833.87(smoker)323.05(bmi)+(-109.11)(sex)+259.45(age)
+summary(predictor_model)
 
-glm(log_charges ~ age + sex + bmi + children + smoker + region +
-      age * smoker +
-      age * sex +
-      bmi * smoker + 
-      age * children +
-      age * region, 
-    data = data)
+dropterm(predictor_model, sort = TRUE)
+
+# Checking Model Fit
+
+model_plot = ggplot(data = model_data, mapping =  aes(x = fitted(predictor_model), y = residuals(predictor_model))) 
+
+# Residuals vs Fitted
+
+model_plot + 
+  geom_point(color = colfunc(1)) + 
+  theme_bw() +
+  ggtitle("Residuals vs Fitted") +
+  labs(x = "Fitted Values", y = "Residuals") + 
+  theme(plot.title = element_text(hjust = 0.5))
+
+# QQ Plot
+ggplot(mapping = aes(sample = residuals(predictor_model))) +
+  geom_qq(color = colfunc(1)) + 
+  geom_qq_line(color = "red") + 
+  theme_bw() + 
+  ggtitle("QQ Plot") +
+  labs(x = "Theoretical", y = "Sample") + 
+  theme(plot.title = element_text(hjust = 0.5))
+
+

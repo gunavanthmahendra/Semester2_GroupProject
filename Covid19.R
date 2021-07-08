@@ -321,10 +321,7 @@ august_cases = data.frame(WHO.Region = rep(regions, times = rep(30, 6)),
 may_cases = regional_data %>% filter(Date >= as.Date("2020-05-01"), Date <= as.Date("2020-05-30"))
 
 # Performing Analysis of Variance
-may_aug_model = lm(august_cases$Confirmed ~ may_model_data$Confirmed, data = filter)
-summary(may_aug_model)
-anova(may_aug_model)
-
+aov(may_cases$Confirmed ~ august_cases$Confirmed)
 
 
 # Correlation between Confirmed and Active

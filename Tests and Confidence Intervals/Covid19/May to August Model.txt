@@ -1,0 +1,6 @@
+Terms:
+                august_cases$Confirmed    Residuals
+Sum of Squares            4.720693e+15  1.503641e+14
+Deg. of Freedom                      1           178
+
+Residual standard error: 919098.5
