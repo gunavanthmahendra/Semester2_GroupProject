@@ -163,18 +163,10 @@ model_plot = ggplot(data = model_data, mapping =  aes(x = fitted(predictor_model
 
 model_plot + 
   geom_point(color = colfunc(1)) + 
+  geom_hline(intercept = mean(residuals(predictor_model)), color = "red") +
   theme_bw() +
   ggtitle("Residuals vs Fitted") +
   labs(x = "Fitted Values", y = "Residuals") + 
-  theme(plot.title = element_text(hjust = 0.5))
-
-# QQ Plot
-ggplot(mapping = aes(sample = residuals(predictor_model))) +
-  geom_qq(color = colfunc(1)) + 
-  geom_qq_line(color = "red") + 
-  theme_bw() + 
-  ggtitle("QQ Plot") +
-  labs(x = "Theoretical", y = "Sample") + 
   theme(plot.title = element_text(hjust = 0.5))
 
 
