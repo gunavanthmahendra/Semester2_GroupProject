@@ -47,6 +47,7 @@ states_data = statewise_testing_zero %>% group_by(across(c("State"))) %>%
     Positive = sum(Positive)
   )
 sum_cases_state = data.frame(State = states_data$State, Cases = states_data$Positive) #Final
+write.csv(sum_cases_state, "StatesCasesSum.csv")
 
 # Average Daily Positive Tests
 data_avg = statewise_testing %>% group_by(across(c("Date"))) %>% 

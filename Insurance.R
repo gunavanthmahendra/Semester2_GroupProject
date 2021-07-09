@@ -127,13 +127,43 @@ for (col in colnames(cor_data)) {
 cor_test_age <- cor.test(cor_data$charges, cor_data$age)
 cor_test_age
 
+## b) Charges~ BMI
+cor_test_BMI <- cor.test(cor_data$charges, cor_data$bmi)
+cor_test_BMI
+##As the P value is lesser than 0.05 we  have enough evidence to reject 
+## H0 and conclude that there is correlation between Charges and BMI and
+## it is not equal to zero.
+## Though as the value of correlation is only 0.2 there is only a weak correlation
+
+## c) Charges children
+cor_test_children<- cor.test(cor_data$charges, cor_data$children)
+cor_test_children
+
+##As the P value is lesser than 0.05 we  have enough evidence to reject 
+## H0 and conclude that there is correlation between Charges and Children and
+## it is not equal to zero.
+## Though, as the value of correlation is 0.06 there is a very weak correlation
+
+## d) Charges smoker
+cor_test_smoker<- cor.test(cor_data$charges, cor_data$smoker)
+cor_test_smoker
+
+##As the P value is lesser than 0.05 we  have enough evidence to reject 
+## H0 and conclude that there is correlation between Charges and smoker and
+## it is not equal to zero.
+## As the value of correlation is 0.8 there is a very strong correlation
+
+## e) Charges~ Region
+cor_test_region<- cor.test(cor_data$charges, cor_data$region)
+cor_test_region
+##As the P value is lesser than 0.08 we don't have enough evidence to reject 
+## H0 and conclude that there is no correlation between Charges and region and
+## it is equal to zero.
+
 ##As the P value is lesser than 0.05 we  have enough evidence to reject 
 ## H0 and conclude that there is correlation between Charges and age and
 ## it is not equal to zero.
 ## Though as the value of correlation is only 0.3 there is only a weak correlation
-
-
-
 
 ## 5 GLM model 
 model_data = data %>% group_by(across(c("age", "region","smoker", "sex"))) %>%
