@@ -1,0 +1,11 @@
+Terms:
+                august_cases$Confirmed    Residuals
+Sum of Squares            4.720693e+15 1.503641e+14
+Deg. of Freedom                      1          178
+
+Residual standard error: 919098.5
+
+
+                        Df     Sum Sq    Mean Sq F value    Pr(>F)    
+august_cases$Confirmed   1 4.7207e+15 4.7207e+15  5588.3 < 2.2e-16 ***
+Residuals              178 1.5036e+14 8.4474e+11    

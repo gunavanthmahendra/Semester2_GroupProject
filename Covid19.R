@@ -140,7 +140,7 @@ data_june_one = region_hypo %>% filter(Date == as.Date("2020-06-01"))
 # Filtering data from 22-01-2020 to 31-05-2020 and finding mean recovery rate
 prev_period_data = region_hypo %>% filter(Date >= as.Date("2020-01-22") & Date <= as.Date("2020-05-31"))
 mean_prev_period = mean(prev_period_data$`Recovery Rate`)
-
+mean_prev_period
 # Performing t-test
 t.test(data_june_one$`Recovery Rate`, mu = mean_prev_period)
 
@@ -150,6 +150,7 @@ t.test(data_june_one$`Recovery Rate`, mu = mean_prev_period)
 march2020 = region_hypo %>% filter(Date >= as.Date("2020-03-01") & Date <= as.Date("2020-03-31"))
 june2020 = region_hypo %>% filter(Date >= as.Date("2020-06-01") & Date <= as.Date("2020-06-30"))
 mean_june2020 = mean(june2020$Deaths)
+mean_june2020
 t.test(march2020$Deaths, mu = mean_june2020, alternative = "greater")
 
 ## Linear Model
@@ -163,7 +164,9 @@ ggplot(regional_data, aes(sample = regional_data$Deaths)) +
   facet_wrap(~ WHO.Region, nrow = 2, scales = c("free")) +
   theme_bw() +
   theme(strip.background = element_rect(colour="black", fill="white")) + 
-  labs(y = "Deaths")
+  labs(x = "Theoretical", y = "Deaths") + 
+  ggtitle("From Grouped Regional Data") + 
+  theme(plot.title = element_text(hjust = 0.5))
 
 # Country Wise QQ Plot from Original dataset
 ggplot(cleaned_data, aes(sample = cleaned_data$Deaths)) + 
@@ -179,9 +182,12 @@ ggplot(cleaned_data, aes(sample = cleaned_data$Deaths)) +
   facet_wrap(~ WHO.Region, nrow = 2, scales = c("free")) +
   theme_bw() +
   theme(strip.background = element_rect(colour="black", fill="white")) + 
-  labs(y = "Deaths")
+  labs(x = "Theoretical", y = "Deaths") + 
+  ggtitle("From Cleaned Data") + 
+  theme(plot.title = element_text(hjust = 0.5))
 
 # Preparing Model using Regional Dataset
+regional_data$WHO.Region = as.factor(regional_data$WHO.Region)
 deaths_model = lm(Deaths ~ WHO.Region + Date, data = regional_data)
 summary(deaths_model)
 
@@ -213,24 +219,34 @@ for (d in dates) {
 
 # Taking sum of daily predictions for each region to get total predicted deaths for October.
 aug_prediction = c(
-  sum(list_africa),
-  sum(list_america), 
-  sum(list_east_mediterranean), 
-  sum(list_europe), 
-  sum(list_southeast_asia), 
-  sum(list_west_pacific)
+  round(sum(list_africa), 0),
+  round(sum(list_america), 0), 
+  round(sum(list_east_mediterranean), 0), 
+  round(sum(list_europe), 0),
+  round(sum(list_southeast_asia), 0), 
+  round(sum(list_west_pacific), 0)
 )
 
 aug_prediction
 
 # Residual Analysis
-ggplot(regional_data, mapping = aes(x = regional_data$Date, y = deaths_model$residuals)) + 
+ggplot(regional_data, mapping = aes(x = deaths_model$fitted.values, y = deaths_model$residuals)) + 
   geom_point(colour = colfunc(1128)) + 
   facet_wrap(~ WHO.Region, nrow = 2, scales = c("free")) + 
   theme_bw() +
   theme(strip.background = element_rect(colour="black", fill="white")) +
-  scale_x_date(date_breaks = "1 month", date_labels = "%b") +
-  labs(x = "Date", y = "Deaths")
+  labs(x = "Fitted Values", y = "Residuals") + 
+  ggtitle("Residuals vs Fitted Values") + 
+  theme(plot.title = element_text(hjust = 0.5))
+
+# QQ Plot
+ggplot(regional_data, mapping = aes(sample = deaths_model$residuals)) + 
+  stat_qq(colour = colfunc(1128)) + 
+  geom_qq_line(colour = "red") +
+  theme_bw() + 
+  labs(x = "Theoretical Quantiles", y = "Sample Quantiles") + 
+  ggtitle("Residual QQ Plot") + 
+  theme(plot.title = element_text(hjust = 0.5))
 
 ## Pie Charts
 pie_data = regional_data %>% group_by(across(c("WHO.Region"))) %>% 
@@ -326,11 +342,11 @@ august_cases = data.frame(WHO.Region = rep(regions, times = rep(30, 6)),
                           list_southeast_asia_cases,
                           list_west_pacific_cases
                           ))
+
 may_cases = regional_data %>% filter(Date >= as.Date("2020-05-01"), Date <= as.Date("2020-05-30"))
 
 # Performing Analysis of Variance
-aov(may_cases$Confirmed ~ august_cases$Confirmed)
-
+anova(lm(may_cases$Confirmed ~ august_cases$Confirmed))
 
 # Correlation between Confirmed and Active
 regional_correlations = vector("numeric", 0)

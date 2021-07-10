@@ -1,11 +1,12 @@
 library(tidyverse)
 library(MASS)
+library(stats)
 ## Reading the csv file
-insurance_data<- read.csv(file.choose())
+insurance_data = read.csv(file.choose())
 head(insurance_data)
 
 ## data cleaning
-data=insurance_data
+data = insurance_data
 
 data$age= as.numeric(data$age)
 
@@ -22,8 +23,6 @@ data$smoker= as.factor(data$smoker)
 data$region = as.factor(data$region)
 #data$region = as.numeric(data$region)
 
-data["log_charges"] = log(data$charges)
-
 head(data)
 
 ## 1 
@@ -39,10 +38,10 @@ regional_insurance = data.frame(regional_insurance %>% group_by(across(c("region
     charges = sum(charges)
     
   ))
-regional_insurance[
+ex = data.frame(regional_insurance[
   with(regional_insurance, order(regional_insurance$charges, decreasing = TRUE)),
-]
-
+])
+write.csv(ex, "ex.csv")
 # From the data we see that the southeast contributes the most to the total charges collected 
 # and has the highest mean BMI and highest number of smokers. 
 # Similarly, we could target regions based on the charges collected historically, number of smokers and average BMI.
@@ -53,12 +52,12 @@ regional_insurance[
 smokers = (
   filter(insurance_data, smoker == "yes")
 )
-smokers
+nrow(smokers)
 
 non_smokers = (
   filter(insurance_data, smoker == "no")
 )
-non_smokers
+nrow(non_smokers)
 
 smoking_data = insurance_data %>% group_by(across(c("smoker"))) %>%
   summarise(
@@ -93,14 +92,26 @@ ggplot(data = data, mapping = aes(x = bmi)) +
   theme_bw() + 
   labs(x = "BMI", y = "Density")
 
-
 ## BMI is normally distributed where the concentration of the data is in
 ## the center and thinner at the tails.
-pricing_model<- lm(charges ~ age + sex + bmi + children + 
-                    smoker + region, data = data)
+pricing_model = lm(charges ~ age + bmi + smoker, data = data)
 
 summary(pricing_model)
 
+# Plots for model
+ggplot(data = data, mapping = aes(x = fitted(pricing_model), y = residuals(pricing_model))) + 
+  geom_point(col = colfunc(1338)) + 
+  theme_bw() + 
+  ggtitle("Residuals vs Fitted") + 
+  labs(x = "Fitted Values", y = "Residuals") + 
+  theme(plot.title = element_text(hjust = 0.5))
+
+ggplot(data = data, mapping = aes(sample = pricing_model$residuals)) + 
+  geom_qq(color = colfunc(1338)) + 
+  geom_qq_line(color = colfunc1(1)) +
+  ggtitle("QQ Plot of Residuals") + 
+  labs(x = "Theoretical Quantiles", y = "Sample Quantiles") + 
+  theme(plot.title = element_text(hjust = 0.5))
 ## xi= age,sex,bmi,children,smoker,region
 ## Y= charge
 ## the linear equation is 
@@ -166,7 +177,8 @@ cor_test_region
 ## Though as the value of correlation is only 0.3 there is only a weak correlation
 
 ## 5 GLM model 
-model_data = data %>% group_by(across(c("age", "region","smoker", "sex"))) %>%
+data["log_charges"] = log(data$charges)
+model_data = data %>% group_by(across(c("age", "sex", "smoker", "region"))) %>%
   summarise(
     log_charges = mean(log_charges),
     children = sum(children), 
@@ -193,12 +205,18 @@ model_plot = ggplot(data = model_data, mapping =  aes(x = fitted(predictor_model
 
 model_plot + 
   geom_point(color = colfunc(1)) + 
-  geom_hline(intercept = mean(residuals(predictor_model)), color = "red") +
+  geom_hline(yintercept = mean(residuals(predictor_model)), color = "red") +
   theme_bw() +
   ggtitle("Residuals vs Fitted") +
   labs(x = "Fitted Values", y = "Residuals") + 
   theme(plot.title = element_text(hjust = 0.5))
 
+ggplot(data = model_data, mapping = aes(sample = residuals(predictor_model))) + 
+  geom_qq(color = colfunc(566)) + 
+  geom_qq_line(color = colfunc1(1)) +
+  ggtitle("QQ Plot of Residuals") + 
+  labs(x = "Theoretical Quantiles", y = "Sample Quantiles") + 
+  theme(plot.title = element_text(hjust = 0.5))
 
 # Sample Predictions
 
