@@ -39,6 +39,13 @@ country_data = cleaned_data %>% group_by(across(c("Country.Region"))) %>%
     Active = sum(Active),
   )
 
+data_r = cleaned_data %>% group_by(across(c("WHO.Region"))) %>%
+  summarise(
+    Confirmed = sum(Confirmed),
+    Deaths = sum(Deaths),
+    Recovered = sum(Recovered),
+    Active = sum(Active),
+  )
 ## Adding in the WHO Region column to the cleaned data.
 cleaned_data["WHO.Region"] = ""
 n = 1
