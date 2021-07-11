@@ -2,6 +2,11 @@ library(tidyverse)
 library(scales)
 library(lubridate)
 
+## Setting working directory and reading data
+setwd("C:\\Users\\guna3\\Desktop\\Semester2_GroupProject")
+data = read.csv("C:\\Users\\guna3\\Desktop\\Semester2_GroupProject\\data_files\\covid_19.csv")
+data$Date = as.Date(data$Date, "%d-%m-%Y")
+
 ## Defining required functions
 
 colfunc = colorRampPalette(c("blue", "green"))
@@ -17,11 +22,6 @@ date_generator = function(date, nday) {
   return(as.character(date_list))
 }
 
-## Setting working directory and reading data
-setwd("C:\\Users\\guna3\\Desktop\\Semester2_GroupProject")
-data = read.csv("C:\\Users\\guna3\\Desktop\\Semester2_GroupProject\\data_files\\covid_19.csv")
-data$Date = as.Date(data$Date, "%d-%m-%Y")
-
 ## Aggregating the data based on Country and Date.
 cleaned_data = data %>% group_by(across(c("Country.Region", "Date"))) %>% 
   summarise(
@@ -30,6 +30,14 @@ cleaned_data = data %>% group_by(across(c("Country.Region", "Date"))) %>%
     Recovered = sum(Recovered),
     Active = sum(Active),
 )
+
+country_data = cleaned_data %>% group_by(across(c("Country.Region"))) %>%
+  summarise(
+    Confirmed = sum(Confirmed),
+    Deaths = sum(Deaths),
+    Recovered = sum(Recovered),
+    Active = sum(Active),
+  )
 
 ## Adding in the WHO Region column to the cleaned data.
 cleaned_data["WHO.Region"] = ""
